@@ -3,11 +3,6 @@ Enable client hyper-v in Windows 10
 -----------------------------------
 https://blogs.technet.microsoft.com/canitpro/2015/09/08/step-by-step-enabling-hyper-v-for-use-on-windows-10/
 **Note:** VMWare, Virtualbox etc. will NO LONGER WORK once hyper-v is enabled!
-
----------------------
-Install openssh-win32
----------------------
-See: https://github.com/PowerShell/Win32-OpenSSH/wiki/Install-Win32-OpenSSH
 	
 -------------------------------------------
 Powershell (on host - run as Administrator)
@@ -27,6 +22,10 @@ New-NetNat –Name NATNetwork –InternalIPInterfaceAddressPrefix 192.51.100.0/2
 Install Ubuntu
 ---
 http://lmgtfy.com/?q=install+ubuntu+18.04+in+hyper-v
+- Don't forget to set reasonable memory/CPU settings (match your number of machine cores and 1/2 RAM?)
+- Assign the VM to "Default Switch" to start
+- Since we're installing Linux, you will need to disable Secure boot in Settings -> Hardware -> Security -> Enable Secure boot (uncheck)
+
 Make sure you have An SSH server running. After installing, configure /etc/netplan as follows:
 ```
 network:
