@@ -1,3 +1,18 @@
+# What is this?
+This is a quick and dirty guide to setting up a Linux-on-Windows Dev environment. This guide assumes you're using Windows 10 Pro or Enterprise. 
+### FAQ:
+1. Why?
+There's many reasons to run Windows as a host. IT managed machine? You want to use your gaming rig at home? Etc. And doing web development in Linux is arguably better. I prefer to dev in Linux so I can run the same versions of GoLang, Node, dotnet etc. that will run in my Docker containers. 
+
+2. So this is Windows Subsystem for Linux?
+No. The performance of WSL is trash. We'll be using Hyper-V, which allows you to create a VM and "forget about it" (it runs in the background, automatically starts/stops when you start/stop your machine, doesn't pester you for updates, etc)
+
+3. What if I want Linux GUI apps?
+We'll be configuring the _Linux_ version of VSCode (via x-remoting), so that you can debug your Linux apps using it's integrated debugger. The guide asssumes this is the _only_ Linux GUI app you need, though in theory other GUI apps could/should work similarly. YMMV!
+
+4. What other tech is used for this franken-environment?
+You'll be running a Windows X-server via VcxSrv, and using cmder as your terminal emulator. It will be configured such that when you'll open it you'll be immediately (and automatically) taken to your Linux shell (thanks to Powershell now including ssh support!). 
+
 -----------------------------------
 Enable client hyper-v in Windows 10
 -----------------------------------
