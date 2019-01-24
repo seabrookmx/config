@@ -135,6 +135,7 @@ to back up your samba configuration. Then add the following lines to your smb.co
 Now run `sudo systemctl restart smbd && sudo systemctl nmbd`
 You can now map a network drive on your Windows host to the following address: `\\192.51.100.11\HOME`
 Now when you click on this drive in explorer it will open your _Linux home directory_!
+
 -----
 TEST!
 -----
