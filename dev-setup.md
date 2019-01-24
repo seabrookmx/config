@@ -1,17 +1,17 @@
 # What is this?
 This is a quick and dirty guide to setting up a Linux-on-Windows Dev environment. This guide assumes you're using Windows 10 Pro or Enterprise.
 ### FAQ:
-1. Why?
-There's many reasons to run Windows as a host. IT managed machine? You want to use your gaming rig at home? Etc. And doing web development in Linux is arguably better. I prefer to dev in Linux so I can run the same versions of GoLang, Node, dotnet etc. that will run in my Docker containers.
+1. **Why?**
+There's many reasons to run Windows as a host. IT managed machine? You want to use your gaming rig at home? You're rocking an MS Surface device? Etc. And (atleast in the opinion of the author) doing web development in Linux is arguably better. I prefer to dev in Linux so I can run the same versions of GoLang, Node, dotnet etc. that will run in my Docker containers.
 
-2. So this is Windows Subsystem for Linux?
+2. **So this is Windows Subsystem for Linux?**
 No. The performance of WSL is trash. We'll be using Hyper-V, which allows you to create a VM and "forget about it" (it runs in the background, automatically starts/stops when you start/stop your machine, doesn't pester you for updates, etc)
 
-3. What if I want Linux GUI apps?
+3. **What if I want Linux GUI apps?**
 We'll be configuring the _Linux_ version of VSCode (via x-remoting), so that you can debug your Linux apps using it's integrated debugger. The guide asssumes this is the _only_ Linux GUI app you need, though in theory other GUI apps could/should work similarly. YMMV!
 
-4. What other tech is used for this franken-environment?
-You'll be running a Windows X-server via VcxSrv, and using cmder as your terminal emulator. It will be configured such that when you'll open it you'll be immediately (and automatically) taken to your Linux shell (thanks to Powershell now including ssh support!).
+4. **What other tech is used for this franken-environment?**
+You'll be running a Windows X-server via VcxSrv, and using cmder as your terminal emulator. It will be configured such that when you open it you'll be immediately taken to your Linux shell (thanks to Powershell now including ssh support!).
 
 -----------------------------------
 Enable client hyper-v in Windows 10
@@ -34,9 +34,10 @@ New-NetNat –Name NATNetwork –InternalIPInterfaceAddressPrefix 192.51.100.0/2
 ```
 
 ---------------------------------------------------------------------------------------------------
-Install Ubuntu
+Install Ubuntu Server
 ---
-http://lmgtfy.com/?q=install+ubuntu+18.04+in+hyper-v
+http://lmgtfy.com/?q=install+ubuntu+18.04+server+in+hyper-v
+- Make sure to install Ubuntu *Server*
 - Don't forget to set reasonable memory/CPU settings (match your number of machine cores and 1/2 RAM?)
 - Assign the VM to "Default Switch" to start
 - Since we're installing Linux, you will need to disable Secure boot in Settings -> Hardware -> Security -> Enable Secure boot (uncheck)
@@ -115,10 +116,25 @@ PowerShell -ExecutionPolicy Bypass -NoLogo -NoExit -Command "ssh username@192.51
 ```
 
 ---
-TODO: configure Samba & Windows Network drive
+Configure Samba & Windows Network drive
 ---
-TODO
-
+Ensure samba is installed (sudo apt install samba). Then run:
+```
+sudo cp /etc/samba/smb.conf /etc/samba/smb.conf.bak
+```
+to back up your samba configuration. Then add the following lines to your smb.conf (right above the `[printers]` section):
+```
+[HOME]
+        comment = dev VM home dir
+        path = /home/<your-user-name>
+        force user = <your-user-name>
+        guest ok = yes
+        public = yes
+        read only = no
+```
+Now run `sudo systemctl restart smbd && sudo systemctl nmbd`
+You can now map a network drive on your Windows host to the following address: `\\192.51.100.11\HOME`
+Now when you click on this drive in explorer it will open your _Linux home directory_!
 -----
 TEST!
 -----
