@@ -8,10 +8,7 @@ There's many reasons to run Windows as a host. IT managed machine? You want to u
 No. The performance of WSL is trash. We'll be using Hyper-V, which allows you to create a VM and "forget about it" (it runs in the background, automatically starts/stops when you start/stop your machine, doesn't pester you for updates, etc)
 
 3. **What if I want Linux GUI apps?**
-We'll be configuring the _Linux_ version of VSCode (via x-remoting), so that you can debug your Linux apps using it's integrated debugger. The guide asssumes this is the _only_ Linux GUI app you need, though in theory other GUI apps could/should work similarly. YMMV!
-
-4. **What other tech is used for this franken-environment?**
-You'll be running a Windows X-server via VcxSrv, and using cmder as your terminal emulator. It will be configured such that when you open it you'll be immediately taken to your Linux shell (thanks to Powershell now including ssh support!).
+The only GUI app I need for development _on Linux_ is VS Code, and it's Remote SSH extension allows us to easily use our Windows VS Code install to tunnel into Linux, and work as if we're on the Linux machine. The filesytem, terminal, debugging etc. are all running on the Linux VM. For my workflow, this is all that's needed because the few other UI tools I run (postman, pgadmin, etc) aren't really impacted by running on Windows. If you have other Linux GUI apps you want/need, x forwarding is an option (via installing vcxsrv on Windows and setting your display in your user profile). I used to use VS Code this way but it has some warts. 
 
 -----------------------------------
 Enable client hyper-v in Windows 10
@@ -33,7 +30,7 @@ New-NetIPAddress –IPAddress 192.51.100.1 -PrefixLength 24 -InterfaceIndex <ind
 New-NetNat –Name NATNetwork –InternalIPInterfaceAddressPrefix 192.51.100.0/24 –Verbose
 ```
 
----------------------------------------------------------------------------------------------------
+---
 Install Ubuntu Server
 ---
 http://lmgtfy.com/?q=install+ubuntu+18.04+server+in+hyper-v
@@ -60,13 +57,6 @@ Confirm you have network access by doing something like:
 wget https://google.ca
 ```
 
----------------------------
-Run hvinstall.sh in the VM
----------------------------
-This will install some common dev tools the author uses, including VS Code.
-Only the latter is needed for testing the following steps, so if you wish to install your
-own dev tools, simply install VSCode here.
-
 ---
 Configure passwordless SSH login
 ---
@@ -76,44 +66,33 @@ Configure passwordless SSH login
 - Run `scp .\.ssh\id_rsa.pub username@192.51.100.11:~/host_id_rsa.pub`
 - _In the VM_ run `cat ~/host_id_rsa.pub >> ~/.ssh/authorized_keys`
 
------------------------
-Configure your VM's Xserver
------------------------
-Add the following to your VM's `~/.bashrc` file:
-```export DISPLAY="192.51.100.1:0"```
-
--------------------------------------------------
-Install VCXSrv (Xserver on Windows)
--------------------------------------------------
-Download version 1.19.6.0 from here: https://sourceforge.net/projects/vcxsrv/files/vcxsrv/
-(you can try a newer version but YMMV - 1.20 had some bugs causing it to hang on Windows 10)
-Once installed add the following IP address to your `C:\Program Files\VcXsrv\X0.hosts file`:
-```192.51.100.11```
-Then add the following to `C:\Program Files\VcXsrv\config.xlaunch` (you may need to create the file):
-```
-<?xml version="1.0" encoding="UTF-8"?>
-<XLaunch WindowMode="MultiWindow" ClientMode="NoClient" LocalClient="False" Display="0" LocalProgram="xcalc" RemoteProgram="xterm" RemotePassword="" PrivateKey="" RemoteHost="" RemoteUser="" XDMCPHost="" XDMCPBroadcast="False" XDMCPIndirect="False" Clipboard="True" ClipboardPrimary="True" ExtraParams="" Wgl="True" DisableAC="False" XDMCPTerminate="False"/>
-```
-
------------------------
-Start Xserver when you start the computer
------------------------
-Create shortcut (right click -> create shortcut) to `C:\Program Files\VcXsrv\xlaunch.exe` with the following params added to the target (right click on the shortcut to edit the target):
-``` -run config.xlaunch```
-
-Move the shortcut to:
-```%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup```
+---
+VS Code configuration
+---
+- Download and install VSCode on your Windows host machine: https://code.visualstudio.com/docs/setup/windows
+- After installing, search for and install the Remote - WSL extension. Click the "Reload required" button to enable it.
+- Press Ctrl+Shift+P and enter Remote-WSL: New Window into the command palette, and then hit enter
+- Verify your new Window is open within your Ubuntu instance by pressing Ctrl+\` to open a terminal, and then enter some commands
 
 ---
-Install cmder in Windows
+Install & configure the Windows Terminal
 ---
-http://cmder.net/
-After installing, go to Settings and configure:
-- Startup -> Startup Options -> Specified named task -> {PowerShell::PowerShell}
-- Startup -> Tasks -> 4 {PowerShell::PowerShell} ->  ..code below..
+- Open the Microsoft Store
+- Search for and install "Windows Terminal (Preview)"
+- Open Windows Terminal
+- Click on the down arrow icon and then Settings (gear icon)
+- Add a new profile that looks like this (just ensure the guid is unique amongs the other profiles):
 ```
-PowerShell -ExecutionPolicy Bypass -NoLogo -NoExit -Command "ssh username@192.51.100.11"
+        {
+            // custom
+            "guid": "{61c54bbd-c2c6-5271-96e7-009a87ff4400}",
+            "name": "name@<your-vm-here>",
+			"commandline": "powershell.exe -ExecutionPolicy Bypass -NoLogo -NoExit -Command \"ssh name@<your-vm-here>\"",
+            "hidden": false
+        }
 ```
+- Paste the guid into the defaultProfile property at the top of the file and save, so that when you open the Windows Terminal it defaults to WSL
+- Test this out by pressing Ctrl+Shift+T to open a new tab. This should open a terminal that's already SSH'd into your VM
 
 ---
 Configure Samba & Windows Network drive
@@ -134,14 +113,10 @@ to back up your samba configuration. Then add the following lines to your smb.co
 ```
 Now run `sudo systemctl restart smbd && sudo systemctl nmbd`
 You can now map a network drive on your Windows host to the following address: `\\192.51.100.11\HOME`
-Now when you click on this drive in explorer it will open your _Linux home directory_!
+Now when you click on this drive in explorer it will open your Linux home directory in windows explorer. 
 
------
-TEST!
------
-- Open cmder (this should automatically ssh you to your VM and give you a bash prompt). Now run:
-    -  $ `mkdir test`
-    -  $ `cd test`
-    -  $ `touch test.txt`
-    -  $ `code .`
-- _Linux_ VS Code should open _in Windows_ .. Magic!
+---------------------------
+Run hvinstall.sh in the VM
+---------------------------
+This will install some common dev tools the author uses.
+Review this script before running, and if it's not to your liking modify it or install your dev tools manually. 
