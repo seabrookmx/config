@@ -70,9 +70,9 @@ Configure passwordless SSH login
 VS Code configuration
 ---
 - Download and install VSCode on your Windows host machine: https://code.visualstudio.com/docs/setup/windows
-- After installing, search for and install the Remote - WSL extension. Click the "Reload required" button to enable it.
-- Press Ctrl+Shift+P and enter Remote-WSL: New Window into the command palette, and then hit enter
-- Verify your new Window is open within your Ubuntu instance by pressing Ctrl+\` to open a terminal, and then enter some commands
+- After installing, search for and install the Remote - SSH extension. Click the "Reload required" button to enable it.
+- Press Ctrl+Shift+P and enter Remote-SSH: New Window into the command palette. You should be able to select your VM as an SSH target here (if not, set up an alias in your SSH config and then it'll show up)
+- Once you've selected your VM, verify your new Window is open within your Ubuntu instance by pressing Ctrl+\` to open a terminal, and then enter some commands such as `uname && uname -r`
 
 ---
 Install & configure the Windows Terminal
@@ -91,7 +91,7 @@ Install & configure the Windows Terminal
             "hidden": false
         }
 ```
-- Paste the guid into the defaultProfile property at the top of the file and save, so that when you open the Windows Terminal it defaults to WSL
+- Paste the guid into the defaultProfile property at the top of the file and save, so that when you open the Windows Terminal it defaults to this profile
 - Test this out by pressing Ctrl+Shift+T to open a new tab. This should open a terminal that's already SSH'd into your VM
 
 ---
