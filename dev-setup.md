@@ -5,7 +5,7 @@ This is a quick and dirty guide to setting up a Linux-on-Windows Dev environment
 There's many reasons to run Windows as a host. IT managed machine? You want to use your gaming rig at home? You're rocking an MS Surface device? Etc. And (atleast in the opinion of the author) doing web development in Linux is arguably better. I prefer to dev in Linux so I can run the same versions of GoLang, Node, dotnet etc. that will run in my Docker containers.
 
 2. **So this is Windows Subsystem for Linux?**
-No. The performance of WSL is trash. We'll be using Hyper-V, which allows you to create a VM and "forget about it" (it runs in the background, automatically starts/stops when you start/stop your machine, doesn't pester you for updates, etc)
+No. The performance of WSL is trash. (Note: **this is fixed in WSL2 - if this is available for you, you can consider this document deprecated**). We'll be using Hyper-V, which allows you to create a VM and "forget about it" (it runs in the background, automatically starts/stops when you start/stop your machine, doesn't pester you for updates, etc)
 
 3. **What if I want Linux GUI apps?**
 The only GUI app I need for development _on Linux_ is VS Code, and it's Remote SSH extension allows us to easily use our Windows VS Code install to tunnel into Linux, and work as if we're on the Linux machine. The filesytem, terminal, debugging etc. are all running on the Linux VM. For my workflow, this is all that's needed because the few other UI tools I run (postman, pgadmin, etc) aren't really impacted by running on Windows. If you have other Linux GUI apps you want/need, x forwarding is an option (via installing vcxsrv on Windows and setting your display in your user profile). I used to use VS Code this way but it has some warts. 
