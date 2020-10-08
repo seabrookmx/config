@@ -47,7 +47,7 @@ network:
             addresses: [192.51.100.11/24]
             gateway4: 192.51.100.1
             nameservers:
-              addresses: [172.16.0.6,192.168.12.250,192.168.120.250,1.1.1.1]
+              addresses: [8.8.8.8,8.8.4.4]
             dhcp4: no
     version: 2
 ```
