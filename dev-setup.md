@@ -17,17 +17,19 @@ https://blogs.technet.microsoft.com/canitpro/2015/09/08/step-by-step-enabling-hy
 **Note:** VMWare, Virtualbox etc. will NO LONGER WORK once hyper-v is enabled!
 
 -------------------------------------------
-Powershell (on host - run as Administrator)
+Create VM NAT Network
 -------------------------------------------
+We'll use the 198.51.100.0/24 subnet as it's reserved for documentation and test purposes. See: https://tools.ietf.org/html/rfc5737
+Run the following in Powershell (on host - run as Administrator):
 ```
 New-VMSwitch –SwitchName "NAT-Switch" –SwitchType Internal –Verbose
 
 Get-NetAdapter
 <find index for "Nat-Switch" we just created>
 
-New-NetIPAddress –IPAddress 192.51.100.1 -PrefixLength 24 -InterfaceIndex <index> –Verbose
+New-NetIPAddress –IPAddress 198.51.100.1 -PrefixLength 24 -InterfaceIndex <index> –Verbose
 
-New-NetNat –Name NATNetwork –InternalIPInterfaceAddressPrefix 192.51.100.0/24 –Verbose
+New-NetNat –Name NATNetwork –InternalIPInterfaceAddressPrefix 198.51.100.0/24 –Verbose
 ```
 
 ---
@@ -44,8 +46,8 @@ Make sure you have An SSH server running. After installing, configure /etc/netpl
 network:
     ethernets:
         eth0:
-            addresses: [192.51.100.11/24]
-            gateway4: 192.51.100.1
+            addresses: [198.51.100.11/24]
+            gateway4: 198.51.100.1
             nameservers:
               addresses: [8.8.8.8,8.8.4.4]
             dhcp4: no
