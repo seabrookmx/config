@@ -35,7 +35,7 @@ New-NetNat –Name NATNetwork –InternalIPInterfaceAddressPrefix 198.51.100.0/2
 ---
 Install Ubuntu Server
 ---
-http://lmgtfy.com/?q=install+ubuntu+18.04+server+in+hyper-v
+http://lmgtfy.com/?q=install+ubuntu+20.04+server+in+hyper-v
 - Make sure to install Ubuntu *Server*
 - Don't forget to set reasonable memory/CPU settings (match your number of machine cores and 1/2 RAM?)
 - Assign the VM to "Default Switch" to start
@@ -88,8 +88,8 @@ Install & configure the Windows Terminal
         {
             // custom
             "guid": "{61c54bbd-c2c6-5271-96e7-009a87ff4400}",
-            "name": "name@<your-vm-here>",
-			"commandline": "powershell.exe -ExecutionPolicy Bypass -NoLogo -NoExit -Command \"ssh name@<your-vm-here>\"",
+            "name": "dev_vm",
+            "commandline": "powershell.exe -ExecutionPolicy Bypass -NoLogo -NoExit -Command \"ssh <username>@192.51.100.11\"",
             "hidden": false
         }
 ```
