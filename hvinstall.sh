@@ -1,10 +1,12 @@
 #!/bin/bash
 
 echo '**   Adding and updating repos **'
-wget -q https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
-sudo dpkg -i packages-microsoft-prod.deb
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+echo \
+  "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
 
 echo '**   Updating package list.   **'
 sudo add-apt-repository universe
@@ -12,19 +14,19 @@ sudo apt-get update
 sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common
 sudo apt-get update
 
-echo '**   Installing desktop packages and devtools from the Ubuntu repo.   **'
+echo '**   Installing packages and devtools from deb repos (gcloud-sdk, httpie, docker, etc)   **'
 sudo apt-get install -y \
-python \
-python-pip \
 python3 \
 python3-pip \
 git \
 vim \
+htop \
 zip \
 unzip \
 httpie \
-dotnet-sdk-2.2 \
-docker-ce;
+gnupg \
+google-cloud-sdk \
+docker-ce docker-ce-cli containerd.io;
 
 echo '**   Installing git-lfs   **'
 sudo add-apt-repository ppa:git-core/ppa && \
@@ -32,8 +34,12 @@ curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.s
 sudo apt-get install git-lfs && \
 git lfs install;
 
-echo '**   Set up virtualenv, docker-compose, and docker user.   **'
-sudo pip install virtualenv docker-compose
+echo '**   Set up virtualenv, pyenv, docker-compose, and docker user.   **'
+sudo pip3 install virtualenv docker-compose
+curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash
+echo 'export PATH="/home/tyler/.pyenv/bin:$PATH"' >> ~/.bashrc 
+echo 'eval "$(pyenv init -)"' >> ~/.bashrc 
+echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc 
 sudo usermod -aG docker $USER
 
 echo '**   Installing kubectl   **'
@@ -46,8 +52,8 @@ git clone https://github.com/ahmetb/kubectx.git ~/.kubectx
 COMPDIR=$(pkg-config --variable=completionsdir bash-completion)
 ln -sf ~/.kubectx/completion/kubens.bash $COMPDIR/kubens
 ln -sf ~/.kubectx/completion/kubectx.bash $COMPDIR/kubectx
-echo '#kubectx and kubens' >> ~/.profile
-echo 'export PATH=$PATH:$HOME/.kubectx' >> ~/.profile
+echo '#kubectx and kubens' >> ~/.bashrc
+echo 'export PATH=$PATH:$HOME/.kubectx' >> ~/.bashrc
 
 echo '**   Installing NVM (Node Version Manager) and NodeJS   **'
 wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.35.1/install.sh | bash
@@ -55,13 +61,12 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 nvm install 14
 
-echo '**   Configure Go 1.15.2 (AMD64)   **'
-wget "https://dl.google.com/go/go1.15.2.linux-amd64.tar.gz"
-sudo tar -C /usr/local -xzf go1.15.2.linux-amd64.tar.gz
-echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.profile
-
 echo '**   Setting default terminal editor to vim   **'
-echo 'export VISUAL=vim' >> ~/.profile
-echo 'export EDITOR="$VISUAL"' >> ~/.profile
+echo 'export VISUAL=vim' >> ~/.bashrc
+echo 'export EDITOR="$VISUAL"' >> ~/.bashrc
+
+echo '**   Setting shell prompt and aliases   **'
+echo 'export PS1="\u@\h \[\e[32m\]\w \[\e[91m\]\$(parse_git_branch)\[\e[00m\]$ "' >> ~/.bashrc
+echo 'alias hist=\'history | grep $@\' >> ~/.bashrc 
 
 echo 'Please run "source ~/.bashrc" and youre all set :)'
