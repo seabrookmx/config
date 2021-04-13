@@ -25,6 +25,8 @@ zip \
 unzip \
 httpie \
 gnupg \
+bash-completion \
+fzf \
 google-cloud-sdk \
 docker-ce docker-ce-cli containerd.io;
 
@@ -46,14 +48,18 @@ echo '**   Installing kubectl   **'
 curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
 chmod +x ./kubectl
 sudo mv ./kubectl /usr/local/bin/kubectl
+echo '#kubectl' >> ~/.bashrc
+echo 'source <(kubectl completion bash)' >> ~/.bashrc
+kubectl completion bash > kubectl_completions
+sudo mv kubectl_completions /etc/bash_completion.d/kubectl
 
 echo '**   Installing kubectx/kubens   **'
 git clone https://github.com/ahmetb/kubectx.git ~/.kubectx
-COMPDIR=$(pkg-config --variable=completionsdir bash-completion)
-ln -sf ~/.kubectx/completion/kubens.bash $COMPDIR/kubens
-ln -sf ~/.kubectx/completion/kubectx.bash $COMPDIR/kubectx
+sudo ln -sf ~/.kubectx/completion/kubens.bash /etc/bash_completion.d/kubens
+sudo ln -sf ~/.kubectx/completion/kubectx.bash /etc/bash_completion.d/kubectx
 echo '#kubectx and kubens' >> ~/.bashrc
 echo 'export PATH=$PATH:$HOME/.kubectx' >> ~/.bashrc
+echo 'export FZF_DEFAULT_OPTS=\'--height 40% --layout=reverse --border\''
 
 echo '**   Installing NVM (Node Version Manager) and NodeJS   **'
 wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.35.1/install.sh | bash
@@ -62,11 +68,14 @@ export NVM_DIR="$HOME/.nvm"
 nvm install 14
 
 echo '**   Setting default terminal editor to vim   **'
+echo '#vim master race' >> ~/.bashrc
 echo 'export VISUAL=vim' >> ~/.bashrc
 echo 'export EDITOR="$VISUAL"' >> ~/.bashrc
 
 echo '**   Setting shell prompt and aliases   **'
+echo '#show git branch in bash prompt' >> ~/.bashrc
 echo 'export PS1="\u@\h \[\e[32m\]\w \[\e[91m\]\$(parse_git_branch)\[\e[00m\]$ "' >> ~/.bashrc
+echo '#"hist" alias' >> ~/.bashrc
 echo 'alias hist=\'history | grep $@\' >> ~/.bashrc 
 
 echo 'Please run "source ~/.bashrc" and youre all set :)'
