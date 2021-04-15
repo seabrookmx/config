@@ -27,6 +27,7 @@ httpie \
 gnupg \
 bash-completion \
 fzf \
+mtr-tiny \
 google-cloud-sdk \
 docker-ce docker-ce-cli containerd.io;
 

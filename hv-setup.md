@@ -118,7 +118,7 @@ You can now map a network drive on your Windows host to the following address: `
 Now when you click on this drive in explorer it will open your Linux home directory in windows explorer. 
 
 ---------------------------
-Run hvinstall.sh in the VM
+Run install.sh in the VM
 ---------------------------
 This will install some common dev tools the author uses.
 Review this script before running, and if it's not to your liking modify it or install your dev tools manually. 
