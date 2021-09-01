@@ -37,12 +37,14 @@ curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.s
 sudo apt-get install git-lfs && \
 git lfs install;
 
-echo '**   Set up virtualenv, pyenv, docker-compose, and docker user.   **'
-sudo pip3 install virtualenv docker-compose
+echo '**   Set up pip deps (awscli, virtualenv, pyenv, docker-compose)   **'
+sudo pip3 install awscli virtualenv docker-compose
 curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash
 echo 'export PATH="/home/tyler/.pyenv/bin:$PATH"' >> ~/.bashrc 
 echo 'eval "$(pyenv init -)"' >> ~/.bashrc 
 echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc 
+
+echo '**   Set up docker user.   **'
 sudo usermod -aG docker $USER
 
 echo '**   Installing kubectl   **'
