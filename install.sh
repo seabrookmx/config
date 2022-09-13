@@ -58,6 +58,8 @@ kubectl completion bash > kubectl_completions
 sudo mv kubectl_completions /etc/bash_completion.d/kubectl
 echo 'alias k=kubectl' >> ~/.bashrc
 echo 'complete -F __start_kubectl k' >> ~/.bashrc
+echo '#TODO: removeme after k8s 1.26'
+echo 'export USE_GKE_GCLOUD_AUTH_PLUGIN=True' >> ~/.bashrc
 
 echo '**   Installing kubectx/kubens   **'
 git clone https://github.com/ahmetb/kubectx.git ~/.kubectx
@@ -84,4 +86,4 @@ echo '#fzf bash history' >> ~/.bashrc
 echo 'export FZF_DEFAULT_OPTS=\'--height 40% --layout=reverse --border\'' >> ~/.bashrc
 echo 'source /usr/share/doc/fzf/examples/key-bindings.bash' >> ~/.bashrc
 
-echo 'Please run "source ~/.bashrc" and youre all set :)'
+echo 'Please run "source ~/.bashrc" and you\'re all set :)'
