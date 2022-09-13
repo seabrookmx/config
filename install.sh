@@ -11,24 +11,25 @@ curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyr
 echo '**   Updating package list.   **'
 sudo add-apt-repository universe
 sudo apt-get update
-sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common
+sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common gnupg lsb-release
 sudo apt-get update
 
 echo '**   Installing packages and devtools from deb repos (gcloud-sdk, httpie, docker, etc)   **'
 sudo apt-get install -y \
-python3 \
+python-is-python3 \
 python3-pip \
+wget \
 git \
 vim \
 htop \
 zip \
 unzip \
 httpie \
-gnupg \
 bash-completion \
 fzf \
 mtr-tiny \
 google-cloud-sdk \
+google-cloud-sdk-gke-gcloud-auth-plugin \
 docker-ce docker-ce-cli containerd.io;
 
 echo '**   Installing git-lfs   **'
@@ -48,13 +49,15 @@ echo '**   Set up docker user.   **'
 sudo usermod -aG docker $USER
 
 echo '**   Installing kubectl   **'
-curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
+sudo curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
 chmod +x ./kubectl
 sudo mv ./kubectl /usr/local/bin/kubectl
 echo '#kubectl' >> ~/.bashrc
 echo 'source <(kubectl completion bash)' >> ~/.bashrc
 kubectl completion bash > kubectl_completions
 sudo mv kubectl_completions /etc/bash_completion.d/kubectl
+echo 'alias k=kubectl' >> ~/.bashrc
+echo 'complete -F __start_kubectl k' >> ~/.bashrc
 
 echo '**   Installing kubectx/kubens   **'
 git clone https://github.com/ahmetb/kubectx.git ~/.kubectx
@@ -62,13 +65,12 @@ sudo ln -sf ~/.kubectx/completion/kubens.bash /etc/bash_completion.d/kubens
 sudo ln -sf ~/.kubectx/completion/kubectx.bash /etc/bash_completion.d/kubectx
 echo '#kubectx and kubens' >> ~/.bashrc
 echo 'export PATH=$PATH:$HOME/.kubectx' >> ~/.bashrc
-echo 'export FZF_DEFAULT_OPTS=\'--height 40% --layout=reverse --border\''
 
 echo '**   Installing NVM (Node Version Manager) and NodeJS   **'
-wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.35.1/install.sh | bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-nvm install 14
+nvm install 16
 
 echo '**   Setting default terminal editor to vim   **'
 echo '#vim master race' >> ~/.bashrc
@@ -78,7 +80,8 @@ echo 'export EDITOR="$VISUAL"' >> ~/.bashrc
 echo '**   Setting shell prompt and aliases   **'
 echo '#show git branch in bash prompt' >> ~/.bashrc
 echo 'export PS1="\u@\h \[\e[32m\]\w \[\e[91m\]\$(parse_git_branch)\[\e[00m\]$ "' >> ~/.bashrc
-echo '#"hist" alias' >> ~/.bashrc
-echo 'alias hist=\'history | grep $@\' >> ~/.bashrc 
+echo '#fzf bash history' >> ~/.bashrc
+echo 'export FZF_DEFAULT_OPTS=\'--height 40% --layout=reverse --border\'' >> ~/.bashrc
+echo 'source /usr/share/doc/fzf/examples/key-bindings.bash' >> ~/.bashrc
 
 echo 'Please run "source ~/.bashrc" and youre all set :)'
