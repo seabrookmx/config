@@ -32,6 +32,8 @@ google-cloud-sdk \
 google-cloud-sdk-gke-gcloud-auth-plugin \
 docker-ce docker-ce-cli containerd.io;
 
+echo '**   TODO Terraform       **'
+
 echo '**   Installing git-lfs   **'
 sudo add-apt-repository ppa:git-core/ppa && \
 curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash && \
@@ -81,9 +83,12 @@ echo 'export EDITOR="$VISUAL"' >> ~/.bashrc
 
 echo '**   Setting shell prompt and aliases   **'
 echo '#show git branch in bash prompt' >> ~/.bashrc
+echo 'parse_git_branch() {' >> ~/.bashrc
+echo "     git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'" >> ~/.bashrc
+echo '}' >> ~/.bashrc
 echo 'export PS1="\u@\h \[\e[32m\]\w \[\e[91m\]\$(parse_git_branch)\[\e[00m\]$ "' >> ~/.bashrc
 echo '#fzf bash history' >> ~/.bashrc
-echo 'export FZF_DEFAULT_OPTS=\'--height 40% --layout=reverse --border\'' >> ~/.bashrc
+echo "export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border'" >> ~/.bashrc
 echo 'source /usr/share/doc/fzf/examples/key-bindings.bash' >> ~/.bashrc
 
 echo 'Please run "source ~/.bashrc" and you\'re all set :)'
