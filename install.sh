@@ -90,5 +90,6 @@ echo 'export PS1="\u@\h \[\e[32m\]\w \[\e[91m\]\$(parse_git_branch)\[\e[00m\]$ "
 echo '#fzf bash history' >> ~/.bashrc
 echo "export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border'" >> ~/.bashrc
 echo 'source /usr/share/doc/fzf/examples/key-bindings.bash' >> ~/.bashrc
+echo 'export HISTFILESIZE=20000' >> ~/.bashrc
 
 echo 'Please run "source ~/.bashrc" and you\'re all set :)'
