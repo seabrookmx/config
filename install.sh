@@ -16,6 +16,7 @@ sudo apt-get update
 
 echo '**   Installing packages and devtools from deb repos (gcloud-sdk, httpie, docker, etc)   **'
 sudo apt-get install -y \
+dotnet-sdk-6.0 \
 python-is-python3 \
 python3-pip \
 wget \
@@ -40,10 +41,11 @@ curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.s
 sudo apt-get install git-lfs && \
 git lfs install;
 
-echo '**   Set up pip deps (awscli, virtualenv, pyenv, docker-compose)   **'
-sudo pip3 install awscli virtualenv docker-compose
+echo '**   Set up pip deps (pyenv, docker-compose)   **'
+sudo pip3 install docker-compose
 curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash
-echo 'export PATH="/home/tyler/.pyenv/bin:$PATH"' >> ~/.bashrc 
+echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bashrc
+echo 'command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc 
 echo 'eval "$(pyenv init -)"' >> ~/.bashrc 
 echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc 
 
@@ -71,10 +73,10 @@ echo '#kubectx and kubens' >> ~/.bashrc
 echo 'export PATH=$PATH:$HOME/.kubectx' >> ~/.bashrc
 
 echo '**   Installing NVM (Node Version Manager) and NodeJS   **'
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.4/install.sh | bash
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-nvm install 16
+nvm install 18
 
 echo '**   Setting default terminal editor to vim   **'
 echo '#vim master race' >> ~/.bashrc
